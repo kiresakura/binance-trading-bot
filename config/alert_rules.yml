@@ -1,0 +1,136 @@
+groups:
+  # ==== 交易系统告警 ====
+  - name: trading_alerts
+    interval: 30s
+    rules:
+      # 紧急停止告警
+      - alert: EmergencyStopActivated
+        expr: trading_bot_emergency_stop_active == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🚨 紧急停止已激活"
+          description: "交易系统已触发紧急停止机制"
+
+      # 高风险拒绝率
+      - alert: HighRiskRejectionRate
+        expr: rate(trading_bot_risk_rejections_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ 高风险拒绝率"
+          description: "风险拒绝率过高: {{ $value }} rejections/min"
+
+      # 回撤过大
+      - alert: HighDrawdown
+        expr: abs(trading_bot_drawdown_percent) > 0.10
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "📉 回撤过大"
+          description: "当前回撤: {{ $value }}%"
+
+      # Sharpe Ratio 过低
+      - alert: LowSharpeRatio
+        expr: trading_bot_sharpe_ratio < 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "📊 Sharpe Ratio 过低"
+          description: "当前 Sharpe Ratio: {{ $value }}"
+
+  # ==== 系统性能告警 ====
+  - name: system_alerts
+    interval: 30s
+    rules:
+      # 高 CPU 使用率
+      - alert: HighCPUUsage
+        expr: trading_bot_cpu_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "🖥️ CPU 使用率高"
+          description: "CPU 使用率: {{ $value }}%"
+
+      # 高内存使用率
+      - alert: HighMemoryUsage
+        expr: trading_bot_memory_usage_percent > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "💾 内存使用率高"
+          description: "内存使用率: {{ $value }}%"
+
+      # WebSocket 断开
+      - alert: WebSocketDisconnected
+        expr: trading_bot_websocket_connected == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🔌 WebSocket 连接断开"
+          description: "WebSocket 连接到 {{ $labels.endpoint }} 已断开"
+
+      # API 错误率高
+      - alert: HighAPIErrorRate
+        expr: rate(trading_bot_errors_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⚠️ API 错误率高"
+          description: "错误率: {{ $value }} errors/min"
+
+  # ==== 交易性能告警 ====
+  - name: performance_alerts
+    interval: 30s
+    rules:
+      # 订单执行延迟高
+      - alert: HighOrderLatency
+        expr: histogram_quantile(0.95, rate(trading_bot_trade_latency_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "⏱️ 订单执行延迟高"
+          description: "95% 延迟: {{ $value }}s"
+
+      # 滑点过大
+      - alert: HighSlippage
+        expr: histogram_quantile(0.95, rate(trading_bot_slippage_percent_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "📈 滑点过大"
+          description: "95% 滑点: {{ $value }}%"
+
+  # ==== 资金安全告警 ====
+  - name: fund_alerts
+    interval: 30s
+    rules:
+      # 余额显著下降
+      - alert: SignificantBalanceDecrease
+        expr: (trading_bot_balance_usdt - trading_bot_balance_usdt offset 1h) / trading_bot_balance_usdt offset 1h < -0.10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "💰 余额显著下降"
+          description: "1小时内余额下降超过 10%"
+
+      # 未实现盈亏过大
+      - alert: HighUnrealizedLoss
+        expr: trading_bot_unrealized_pnl_usdt < -1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "📉 未实现亏损过大"
+          description: "未实现亏损: ${{ $value }}"

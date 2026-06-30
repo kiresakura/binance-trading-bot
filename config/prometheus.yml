@@ -1,0 +1,49 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'binance-trading-bot-enterprise'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus 自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 交易机器人应用监控
+  - job_name: 'trading-bot'
+    static_configs:
+      - targets: ['trading-bot:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # TimescaleDB (PostgreSQL) 监控
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['timescaledb:5432']
+    metrics_path: '/metrics'
+
+  # Redis 监控
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+
+  # RabbitMQ 监控
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15672']
+    metrics_path: '/api/metrics'
+
+# 告警规则文件
+rule_files:
+  - '/etc/prometheus/alert_rules.yml'

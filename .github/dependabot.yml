@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Python 依賴（pip）
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      # 把 minor/patch 更新合併成單一 PR，減少噪音
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # 主版本升級多屬破壞性（本專案刻意鎖定相容的 2023 生態，且框架升級需
+      # fastapi/starlette 協同 + 回歸測試）。改由人工處理；仍接收 minor/patch
+      # 與 GitHub 安全性更新（security updates 不受此規則阻擋）。
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
+
+  # Docker 基底映像
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    ignore:
+      # 鎖定的依賴僅支援到 Python 3.12；不要提議 3.13+ 的 base image（會無法安裝）
+      - dependency-name: "python"
+        versions:
+          - ">=3.13"

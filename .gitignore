@@ -1,0 +1,83 @@
+# 環境變量
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 虛擬環境
+venv/
+.venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 測試
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# 日誌與數據
+logs/
+*.log
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+
+# 資料庫（執行期資料，不應入庫）
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+data/*.db
+data/*.db-*
+
+# 模型與檢查點
+models/checkpoints/
+*.pt
+*.pth
+*.pkl
+mlruns/
+
+# 臨時文件
+*.tmp
+.cache/
+tmp/
+
+# IDE 配置
+*.sublime-project
+*.sublime-workspace
+.mypy_cache/
+.dmypy.json
+dmypy.json

@@ -1,0 +1,38 @@
+# Railway 輕量版 Dockerfile
+# 僅包含 API 服務必需的套件（無 ML/AI），映像大小 < 1GB
+
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# 安装最小系统依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    python3-dev \
+    linux-headers-generic \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 复制輕量版依赖文件
+COPY requirements-railway.txt .
+
+# 安装 Python 依赖
+RUN pip install --no-cache-dir -r requirements-railway.txt \
+    && rm -rf ~/.cache/pip
+
+# 复制应用代码（只複製必要的）
+COPY src/ ./src/
+COPY .env* ./
+
+# 创建日志目录
+RUN mkdir -p /app/logs /app/data
+
+# Railway 使用 PORT 環境變數
+ENV PORT=8000
+
+# 暴露端口
+EXPOSE $PORT
+
+# 运行应用 (FastAPI) - 使用 shell 形式以支援環境變數
+CMD uvicorn src.api.app:app --host 0.0.0.0 --port $PORT

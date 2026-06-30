@@ -1,0 +1,260 @@
+{
+  "dashboard": {
+    "title": "Binance Trading Bot - Enterprise Dashboard",
+    "tags": ["trading", "binance", "enterprise"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 0,
+    "refresh": "10s",
+    
+    "panels": [
+      {
+        "id": 1,
+        "title": "总收益 / 损失",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "trading_bot_balance_usdt",
+          "legendFormat": "当前余额"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": null, "color": "red"},
+                {"value": 0, "color": "yellow"},
+                {"value": 10000, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      
+      {
+        "id": 2,
+        "title": "当前回撤",
+        "type": "gauge",
+        "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "abs(trading_bot_drawdown_percent)"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 5, "color": "yellow"},
+                {"value": 10, "color": "red"}
+              ]
+            },
+            "max": 20
+          }
+        }
+      },
+      
+      {
+        "id": 3,
+        "title": "Sharpe Ratio",
+        "type": "gauge",
+        "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "trading_bot_sharpe_ratio"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "yellow"},
+                {"value": 2, "color": "green"}
+              ]
+            },
+            "min": 0,
+            "max": 3
+          }
+        }
+      },
+      
+      {
+        "id": 4,
+        "title": "风险分数",
+        "type": "gauge",
+        "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "trading_bot_risk_score"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 0.5, "color": "yellow"},
+                {"value": 0.8, "color": "red"}
+              ]
+            },
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      
+      {
+        "id": 5,
+        "title": "投资组合价值趋势",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+        "targets": [
+          {
+            "expr": "trading_bot_balance_usdt",
+            "legendFormat": "总余额"
+          },
+          {
+            "expr": "trading_bot_unrealized_pnl_usdt",
+            "legendFormat": "未实现盈亏"
+          }
+        ],
+        "yaxes": [{"format": "currencyUSD"}, {"format": "short"}]
+      },
+      
+      {
+        "id": 6,
+        "title": "交易量趋势",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+        "targets": [{
+          "expr": "rate(trading_bot_trade_volume_total[5m])",
+          "legendFormat": "{{symbol}}"
+        }],
+        "yaxes": [{"format": "currencyUSD"}, {"format": "short"}]
+      },
+      
+      {
+        "id": 7,
+        "title": "订单执行延迟 (P95)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 12, "w": 8, "h": 6},
+        "targets": [{
+          "expr": "histogram_quantile(0.95, rate(trading_bot_trade_latency_seconds_bucket[5m]))",
+          "legendFormat": "P95 延迟"
+        }],
+        "yaxes": [{"format": "s", "label": "延迟"}, {"format": "short"}]
+      },
+      
+      {
+        "id": 8,
+        "title": "滑点分布 (P95)",
+        "type": "graph",
+        "gridPos": {"x": 8, "y": 12, "w": 8, "h": 6},
+        "targets": [{
+          "expr": "histogram_quantile(0.95, rate(trading_bot_slippage_percent_bucket[5m]))",
+          "legendFormat": "P95 滑点"
+        }],
+        "yaxes": [{"format": "percent", "label": "滑点"}, {"format": "short"}]
+      },
+      
+      {
+        "id": 9,
+        "title": "风险拒绝统计",
+        "type": "graph",
+        "gridPos": {"x": 16, "y": 12, "w": 8, "h": 6},
+        "targets": [{
+          "expr": "rate(trading_bot_risk_rejections_total[5m])",
+          "legendFormat": "{{reason}}"
+        }],
+        "yaxes": [{"format": "short", "label": "拒绝/分钟"}, {"format": "short"}]
+      },
+      
+      {
+        "id": 10,
+        "title": "系统资源 - CPU",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 18, "w": 12, "h": 6},
+        "targets": [{
+          "expr": "trading_bot_cpu_usage_percent",
+          "legendFormat": "CPU 使用率"
+        }],
+        "yaxes": [{"format": "percent", "max": 100}, {"format": "short"}]
+      },
+      
+      {
+        "id": 11,
+        "title": "系统资源 - 内存",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 18, "w": 12, "h": 6},
+        "targets": [{
+          "expr": "trading_bot_memory_usage_percent",
+          "legendFormat": "内存使用率"
+        }],
+        "yaxes": [{"format": "percent", "max": 100}, {"format": "short"}]
+      },
+      
+      {
+        "id": 12,
+        "title": "WebSocket 连接状态",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 24, "w": 6, "h": 3},
+        "targets": [{
+          "expr": "trading_bot_websocket_connected",
+          "legendFormat": "{{endpoint}}"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"value": 0, "text": "断开", "color": "red"},
+              {"value": 1, "text": "连接", "color": "green"}
+            ]
+          }
+        }
+      },
+      
+      {
+        "id": 13,
+        "title": "开放仓位数量",
+        "type": "stat",
+        "gridPos": {"x": 6, "y": 24, "w": 6, "h": 3},
+        "targets": [{
+          "expr": "trading_bot_open_positions"
+        }]
+      },
+      
+      {
+        "id": 14,
+        "title": "今日交易次数",
+        "type": "stat",
+        "gridPos": {"x": 12, "y": 24, "w": 6, "h": 3},
+        "targets": [{
+          "expr": "increase(trading_bot_trades_total[24h])"
+        }]
+      },
+      
+      {
+        "id": 15,
+        "title": "API 错误率",
+        "type": "stat",
+        "gridPos": {"x": 18, "y": 24, "w": 6, "h": 3},
+        "targets": [{
+          "expr": "rate(trading_bot_errors_total[5m])"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 1, "color": "yellow"},
+                {"value": 5, "color": "red"}
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}
