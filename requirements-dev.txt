@@ -5,13 +5,9 @@
 # ============================================================
 
 # ==================== 测试 ====================
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-cov==4.1.0
-pytest-mock==3.12.0
+# pytest 系列與 httpx 與 CI 共用同一份版本鎖定
+-r requirements-test.txt
 pytest-xdist==3.5.0
-pytest-timeout==2.2.0    # 防止測試掛死（對含網路呼叫的測試很重要）
-httpx==0.25.2            # TestClient 需要
 coverage[toml]==7.3.3
 
 # ==================== 代码质量 ====================
