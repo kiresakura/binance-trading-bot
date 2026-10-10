@@ -1,5 +1,6 @@
 """幣安 API 客戶端 - 修復版（含精度處理）"""
 
+import asyncio
 import hmac
 import hashlib
 import time
