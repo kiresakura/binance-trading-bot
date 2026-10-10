@@ -57,9 +57,10 @@ class BinanceClient:
         session = await self._get_session()
         url = f"{self.base_url}{endpoint}"
 
-        headers = {
-            "X-MBX-APIKEY": self.api_key
-        }
+        # 公開行情端點不需要金鑰；未設定金鑰時不送標頭（aiohttp 不接受 None 值）
+        headers = {}
+        if self.api_key:
+            headers["X-MBX-APIKEY"] = self.api_key
 
         if params is None:
             params = {}

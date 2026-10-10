@@ -9,6 +9,55 @@ from unittest.mock import AsyncMock
 from src.services.binance_client import BinanceClient
 
 
+class _FakeResponse:
+    status = 200
+
+    async def json(self):
+        return [[1700000000000, "42000.0", "42100.0", "41900.0", "42050.0", "12.5"]]
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc):
+        return False
+
+
+class _FakeSession:
+    """Records the headers of each GET instead of opening a connection."""
+
+    def __init__(self):
+        self.sent_headers = []
+
+    def get(self, url, params=None, headers=None):
+        self.sent_headers.append(headers)
+        return _FakeResponse()
+
+
+class TestRequestHeaders:
+    """Public market-data endpoints must work without an API key."""
+
+    async def test_no_api_key_header_when_key_is_not_configured(self):
+        client = BinanceClient()
+        client.api_key = None
+        session = _FakeSession()
+        client._get_session = AsyncMock(return_value=session)
+
+        klines = await client.get_klines("BTCUSDT", limit=1)
+
+        assert len(klines) == 1
+        assert "X-MBX-APIKEY" not in session.sent_headers[0]
+
+    async def test_api_key_header_sent_when_key_is_configured(self):
+        client = BinanceClient()
+        client.api_key = "test-key"
+        session = _FakeSession()
+        client._get_session = AsyncMock(return_value=session)
+
+        await client.get_klines("BTCUSDT", limit=1)
+
+        assert session.sent_headers[0]["X-MBX-APIKEY"] == "test-key"
+
+
 class TestCancelAllOrders:
     """``cancel_all_orders`` backs the Telegram emergency-stop command."""
 
