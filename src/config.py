@@ -105,7 +105,7 @@ class Settings(BaseSettings):
     def BINANCE_WS_URL(self) -> str:
         """Binance WebSocket URL"""
         if self.BINANCE_TESTNET:
-            return "wss://testnet.binance.vision/ws"
+            return "wss://stream.testnet.binance.vision/ws"
         return "wss://stream.binance.com:9443/ws"
 
     # ==================== Telegram 通知配置 ====================
