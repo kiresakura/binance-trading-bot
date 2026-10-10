@@ -29,6 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-test.txt
 
+      - name: Lint (syntax errors and undefined names)
+        run: flake8 --count --select=E9,F63,F7,F82 --show-source --statistics src tests scripts
+
       - name: Run test suite
         run: pytest
 
