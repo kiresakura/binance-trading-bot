@@ -2,6 +2,8 @@
 
 **企业级混合架构交易系统 v0.2.0**
 
+> 本指南部分章节描述的是设计目标；各功能目前的实现与测试状态以 [README 的 Project status](README.md#-project-status) 为准。
+
 ---
 
 ## 📖 目录
@@ -128,7 +130,7 @@ Layer 5: 熔断机制      → 连续亏损 ≥ 5 次自动停止
 ### 技术栈
 
 **后端**:
-- Python 3.10+
+- Python 3.11 或 3.12（CI 测试版本）
 - FastAPI (REST API)
 - asyncio (异步编程)
 
@@ -184,7 +186,7 @@ Layer 5: 熔断机制      → 连续亏损 ≥ 5 次自动停止
 
 ### 前置要求
 
-- **Python 3.10+**
+- **Python 3.11 或 3.12**（CI 测试版本）
 - **Docker & Docker Compose** (可选，推荐生产环境)
 - **Binance API Key** (测试网或真实账户)
 
