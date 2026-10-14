@@ -4,10 +4,10 @@
 #   pip install -r requirements.txt -r requirements-test.txt
 # ============================================================
 
-pytest==7.4.3
-pytest-asyncio==0.21.1
+pytest==7.4.4
+pytest-asyncio==0.26.0
 pytest-cov==4.1.0
-pytest-mock==3.12.0
-pytest-timeout==2.2.0    # 防止測試掛死（對含網路呼叫的測試很重要）
-httpx==0.25.2            # TestClient 需要
+pytest-mock==3.16.0
+pytest-timeout==2.4.0    # 防止測試掛死（對含網路呼叫的測試很重要）
+httpx==0.28.1            # TestClient 需要
 flake8==6.1.0            # CI 的語法錯誤／未定義名稱檢查
