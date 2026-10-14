@@ -7,25 +7,25 @@
 # ==================== 测试 ====================
 # pytest 系列、httpx、flake8 與 CI 共用同一份版本鎖定
 -r requirements-test.txt
-pytest-xdist==3.5.0
-coverage[toml]==7.3.3
+pytest-xdist==3.8.0
+coverage[toml]==7.16.2
 
 # ==================== 代码质量 ====================
-black==24.3.0            # 升級：修補 CVE-2024-21503 (ReDoS)
+black==24.10.0            # 升級：修補 CVE-2024-21503 (ReDoS)
 isort==5.13.2
-pylint==3.0.3
-mypy==1.7.1
+pylint==3.3.9
+mypy==1.20.2
 
 # ==================== 安全扫描 ====================
 pip-audit>=2.7.3
 
 # ==================== 开发工具 ====================
-ipython==8.18.1
+ipython==8.39.0
 ipdb==0.13.13
-py-spy==0.3.14
+py-spy==0.4.2
 memory-profiler==0.61.0
-pgcli==4.0.1
+pgcli==4.7.1
 
 # ==================== 笔记本（可选）====================
-jupyter==1.0.0
-notebook==7.2.2          # 升級：修補舊版 XSS/RCE 類問題
+jupyter==1.1.1
+notebook==7.6.3          # 升級：修補舊版 XSS/RCE 類問題
